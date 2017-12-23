@@ -76,18 +76,33 @@ pub const TIOCSSOFTCAR: ::c_ulong = 0x541A;
 pub const RLIMIT_NOFILE: ::c_int = 7;
 pub const RLIMIT_NPROC: ::c_int = 6;
 
-pub const O_APPEND: ::c_int = 1024;
-pub const O_CREAT: ::c_int = 64;
-pub const O_EXCL: ::c_int = 128;
-pub const O_NOCTTY: ::c_int = 256;
-pub const O_NONBLOCK: ::c_int = 2048;
-pub const O_SYNC: ::c_int = 1052672;
-pub const O_RSYNC: ::c_int = 1052672;
-pub const O_DSYNC: ::c_int = 4096;
-pub const O_FSYNC: ::c_int = 0x101000;
-pub const O_NOATIME: ::c_int = 0o1000000;
-pub const O_PATH: ::c_int = 0o10000000;
-pub const O_TMPFILE: ::c_int = 0o20000000 | O_DIRECTORY;
+cfg_if! {
+    if #[cfg(not(target_os = "gnu"))] {
+        pub const O_APPEND: ::c_int = 1024;
+        pub const O_CREAT: ::c_int = 64;
+        pub const O_EXCL: ::c_int = 128;
+        pub const O_NOCTTY: ::c_int = 256;
+        pub const O_NONBLOCK: ::c_int = 2048;
+        pub const O_SYNC: ::c_int = 1052672;
+        pub const O_RSYNC: ::c_int = 1052672;
+        pub const O_DSYNC: ::c_int = 4096;
+        pub const O_FSYNC: ::c_int = 0x101000;
+        pub const O_NOATIME: ::c_int = 0o1000000;
+        pub const O_PATH: ::c_int = 0o10000000;
+        pub const O_TMPFILE: ::c_int = 0o20000000 | O_DIRECTORY;
+    } else {
+        pub const O_APPEND: ::c_int = 0x0100;
+        pub const O_CREAT: ::c_int = 0x0010;
+        pub const O_EXCL: ::c_int = 0x0020;
+        pub const O_NOCTTY: ::c_int = 0;
+        pub const O_NONBLOCK: ::c_int = 0x0008;
+        pub const O_SYNC: ::c_int = 0x0400;
+        pub const O_RSYNC: ::c_int = O_SYNC;
+        pub const O_DSYNC: ::c_int = O_SYNC;
+        pub const O_FSYNC: ::c_int = O_SYNC;
+        pub const O_NOATIME: ::c_int = 0x0800;
+    }
+}
 
 pub const MAP_GROWSDOWN: ::c_int = 0x0100;
 
@@ -249,9 +264,15 @@ pub const SFD_CLOEXEC: ::c_int = 0x080000;
 
 pub const NCCS: usize = 32;
 
-pub const O_TRUNC: ::c_int = 512;
-
-pub const O_CLOEXEC: ::c_int = 0x80000;
+cfg_if! {
+    if #[cfg(not(target_os = "gnu"))] {
+        pub const O_TRUNC: ::c_int = 512;
+        pub const O_CLOEXEC: ::c_int = 0x80000;
+    } else {
+        pub const O_TRUNC: ::c_int = 0x10000;
+        pub const O_CLOEXEC: ::c_int = 0x400000;
+    }
+}
 
 pub const EBFONT: ::c_int = 59;
 pub const ENOSTR: ::c_int = 60;
@@ -277,11 +298,23 @@ pub const EPOLL_CLOEXEC: ::c_int = 0x80000;
 
 pub const EFD_CLOEXEC: ::c_int = 0x80000;
 
-pub const __SIZEOF_PTHREAD_CONDATTR_T: usize = 4;
-pub const __SIZEOF_PTHREAD_MUTEX_T: usize = 24;
-pub const __SIZEOF_PTHREAD_RWLOCK_T: usize = 32;
-pub const __SIZEOF_PTHREAD_MUTEXATTR_T: usize = 4;
-pub const __SIZEOF_PTHREAD_RWLOCKATTR_T: usize = 8;
+cfg_if! {
+    if #[cfg(not(target_os = "gnu"))] {
+        // Linux nptl
+        pub const __SIZEOF_PTHREAD_CONDATTR_T: usize = 4;
+        pub const __SIZEOF_PTHREAD_MUTEX_T: usize = 24;
+        pub const __SIZEOF_PTHREAD_RWLOCK_T: usize = 32;
+        pub const __SIZEOF_PTHREAD_MUTEXATTR_T: usize = 4;
+        pub const __SIZEOF_PTHREAD_RWLOCKATTR_T: usize = 8;
+    } else {
+        // Hurd libpthread
+        pub const __SIZEOF_PTHREAD_CONDATTR_T: usize = 8;
+        pub const __SIZEOF_PTHREAD_MUTEX_T: usize = 32;
+        pub const __SIZEOF_PTHREAD_RWLOCK_T: usize = 28;
+        pub const __SIZEOF_PTHREAD_MUTEXATTR_T: usize = 16;
+        pub const __SIZEOF_PTHREAD_RWLOCKATTR_T: usize = 4;
+    }
+}
 
 pub const PTRACE_GETFPREGS: ::c_uint = 14;
 pub const PTRACE_SETFPREGS: ::c_uint = 15;

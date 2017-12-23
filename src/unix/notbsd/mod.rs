@@ -53,6 +53,7 @@ s! {
         pub ai_addrlen: socklen_t,
 
         #[cfg(any(target_os = "linux",
+                  target_os = "gnu",
                   target_os = "emscripten",
                   target_os = "fuchsia"))]
         pub ai_addr: *mut ::sockaddr,
@@ -259,9 +260,17 @@ pub const RLIMIT_RTPRIO: ::c_int = 14;
 
 pub const RUSAGE_SELF: ::c_int = 0;
 
-pub const O_RDONLY: ::c_int = 0;
-pub const O_WRONLY: ::c_int = 1;
-pub const O_RDWR: ::c_int = 2;
+cfg_if! {
+    if #[cfg(not(target_os = "gnu"))] {
+        pub const O_RDONLY: ::c_int = 0;
+        pub const O_WRONLY: ::c_int = 1;
+        pub const O_RDWR: ::c_int = 2;
+    } else {
+        pub const O_RDONLY: ::c_int = 1;
+        pub const O_WRONLY: ::c_int = 2;
+        pub const O_RDWR: ::c_int = 3;
+    }
+}
 
 pub const SOCK_CLOEXEC: ::c_int = O_CLOEXEC;
 
@@ -366,40 +375,79 @@ pub const MS_MGC_VAL: ::c_ulong = 0xc0ed0000;
 pub const MS_MGC_MSK: ::c_ulong = 0xffff0000;
 pub const MS_RMT_MASK: ::c_ulong = 0x800051;
 
-pub const EPERM: ::c_int = 1;
-pub const ENOENT: ::c_int = 2;
-pub const ESRCH: ::c_int = 3;
-pub const EINTR: ::c_int = 4;
-pub const EIO: ::c_int = 5;
-pub const ENXIO: ::c_int = 6;
-pub const E2BIG: ::c_int = 7;
-pub const ENOEXEC: ::c_int = 8;
-pub const EBADF: ::c_int = 9;
-pub const ECHILD: ::c_int = 10;
-pub const EAGAIN: ::c_int = 11;
-pub const ENOMEM: ::c_int = 12;
-pub const EACCES: ::c_int = 13;
-pub const EFAULT: ::c_int = 14;
-pub const ENOTBLK: ::c_int = 15;
-pub const EBUSY: ::c_int = 16;
-pub const EEXIST: ::c_int = 17;
-pub const EXDEV: ::c_int = 18;
-pub const ENODEV: ::c_int = 19;
-pub const ENOTDIR: ::c_int = 20;
-pub const EISDIR: ::c_int = 21;
-pub const EINVAL: ::c_int = 22;
-pub const ENFILE: ::c_int = 23;
-pub const EMFILE: ::c_int = 24;
-pub const ENOTTY: ::c_int = 25;
-pub const ETXTBSY: ::c_int = 26;
-pub const EFBIG: ::c_int = 27;
-pub const ENOSPC: ::c_int = 28;
-pub const ESPIPE: ::c_int = 29;
-pub const EROFS: ::c_int = 30;
-pub const EMLINK: ::c_int = 31;
-pub const EPIPE: ::c_int = 32;
-pub const EDOM: ::c_int = 33;
-pub const ERANGE: ::c_int = 34;
+cfg_if! {
+    if #[cfg(not(target_os = "gnu"))] {
+        pub const EPERM: ::c_int = 1;
+        pub const ENOENT: ::c_int = 2;
+        pub const ESRCH: ::c_int = 3;
+        pub const EINTR: ::c_int = 4;
+        pub const EIO: ::c_int = 5;
+        pub const ENXIO: ::c_int = 6;
+        pub const E2BIG: ::c_int = 7;
+        pub const ENOEXEC: ::c_int = 8;
+        pub const EBADF: ::c_int = 9;
+        pub const ECHILD: ::c_int = 10;
+        pub const EAGAIN: ::c_int = 11;
+        pub const ENOMEM: ::c_int = 12;
+        pub const EACCES: ::c_int = 13;
+        pub const EFAULT: ::c_int = 14;
+        pub const ENOTBLK: ::c_int = 15;
+        pub const EBUSY: ::c_int = 16;
+        pub const EEXIST: ::c_int = 17;
+        pub const EXDEV: ::c_int = 18;
+        pub const ENODEV: ::c_int = 19;
+        pub const ENOTDIR: ::c_int = 20;
+        pub const EISDIR: ::c_int = 21;
+        pub const EINVAL: ::c_int = 22;
+        pub const ENFILE: ::c_int = 23;
+        pub const EMFILE: ::c_int = 24;
+        pub const ENOTTY: ::c_int = 25;
+        pub const ETXTBSY: ::c_int = 26;
+        pub const EFBIG: ::c_int = 27;
+        pub const ENOSPC: ::c_int = 28;
+        pub const ESPIPE: ::c_int = 29;
+        pub const EROFS: ::c_int = 30;
+        pub const EMLINK: ::c_int = 31;
+        pub const EPIPE: ::c_int = 32;
+        pub const EDOM: ::c_int = 33;
+        pub const ERANGE: ::c_int = 34;
+    } else {
+        pub const EPERM: ::c_int = 0x40000001;
+        pub const ENOENT: ::c_int = 0x40000002;
+        pub const ESRCH: ::c_int = 0x40000003;
+        pub const EINTR: ::c_int = 0x40000004;
+        pub const EIO: ::c_int = 0x40000005;
+        pub const ENXIO: ::c_int = 0x40000006;
+        pub const E2BIG: ::c_int = 0x40000007;
+        pub const ENOEXEC: ::c_int = 0x40000008;
+        pub const EBADF: ::c_int = 0x40000009;
+        pub const ECHILD: ::c_int = 0x4000000A;
+        pub const EAGAIN: ::c_int = 0x40000029;
+        pub const ENOMEM: ::c_int = 0x4000000C;
+        pub const EACCES: ::c_int = 0x4000000D;
+        pub const EFAULT: ::c_int = 0x4000000E;
+        pub const ENOTBLK: ::c_int = 0x4000000F;
+        pub const EBUSY: ::c_int = 0x40000010;
+        pub const EEXIST: ::c_int = 0x40000011;
+        pub const EXDEV: ::c_int = 0x40000012;
+        pub const ENODEV: ::c_int = 0x40000013;
+        pub const ENOTDIR: ::c_int = 0x40000014;
+        pub const EISDIR: ::c_int = 0x40000015;
+        pub const EINVAL: ::c_int = 0x40000016;
+        pub const ENFILE: ::c_int = 0x40000017;
+        pub const EMFILE: ::c_int = 0x40000018;
+        pub const ENOTTY: ::c_int = 0x40000019;
+        pub const ETXTBSY: ::c_int = 0x40000020;
+        pub const EFBIG: ::c_int = 0x40000021;
+        pub const ENOSPC: ::c_int = 0x40000022;
+        pub const ESPIPE: ::c_int = 0x40000023;
+        pub const EROFS: ::c_int = 0x40000024;
+        pub const EMLINK: ::c_int = 0x40000025;
+        pub const EPIPE: ::c_int = 0x40000026;
+        pub const EDOM: ::c_int = 0x40000027;
+        pub const ERANGE: ::c_int = 0x40000028;
+    }
+}
 pub const EWOULDBLOCK: ::c_int = EAGAIN;
 
 pub const SCM_RIGHTS: ::c_int = 0x01;
@@ -612,7 +660,10 @@ pub const SS_DISABLE: ::c_int = 2;
 
 pub const PATH_MAX: ::c_int = 4096;
 
+#[cfg(not(target_os = "gnu"))]
 pub const FD_SETSIZE: usize = 1024;
+#[cfg(target_os = "gnu")]
+pub const FD_SETSIZE: usize = 256;
 
 pub const EPOLLIN: ::c_int = 0x1;
 pub const EPOLLPRI: ::c_int = 0x2;
@@ -998,7 +1049,7 @@ cfg_if! {
     if #[cfg(target_os = "emscripten")] {
         mod emscripten;
         pub use self::emscripten::*;
-    } else if #[cfg(any(target_os = "linux", target_os = "fuchsia"))] {
+    } else if #[cfg(any(target_os = "linux", target_os = "gnu", target_os = "fuchsia"))] {
         mod linux;
         pub use self::linux::*;
     } else if #[cfg(target_os = "android")] {

@@ -745,6 +745,7 @@ extern {
     pub fn gai_strerror(errcode: ::c_int) -> *const ::c_char;
     #[cfg_attr(any(
                    all(target_os = "linux", not(target_env = "musl")),
+                   target_os = "gnu",
                    target_os = "freebsd",
                    target_os = "dragonfly",
                    target_os = "haiku"),
@@ -916,6 +917,7 @@ cfg_if! {
         mod newlib;
         pub use self::newlib::*;
     } else if #[cfg(any(target_os = "linux",
+                        target_os = "gnu",
                         target_os = "android",
                         target_os = "emscripten",
                         target_os = "fuchsia"))] {

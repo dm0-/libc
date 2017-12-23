@@ -785,7 +785,11 @@ pub const PTHREAD_MUTEX_ERRORCHECK: ::c_int = 2;
 pub const PTHREAD_MUTEX_DEFAULT: ::c_int = PTHREAD_MUTEX_NORMAL;
 pub const PTHREAD_PROCESS_PRIVATE: ::c_int = 0;
 pub const PTHREAD_PROCESS_SHARED: ::c_int = 1;
+
+#[cfg(not(target_os = "gnu"))]
 pub const __SIZEOF_PTHREAD_COND_T: usize = 48;
+#[cfg(target_os = "gnu")]
+pub const __SIZEOF_PTHREAD_COND_T: usize = 20;
 
 pub const RENAME_NOREPLACE: ::c_int = 1;
 pub const RENAME_EXCHANGE: ::c_int = 2;

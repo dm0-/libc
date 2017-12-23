@@ -234,8 +234,15 @@ pub const SO_SNDLOWAT: ::c_int = 19;
 pub const SO_RCVTIMEO: ::c_int = 20;
 pub const SO_SNDTIMEO: ::c_int = 21;
 
-pub const FIOCLEX: ::c_ulong = 0x5451;
-pub const FIONBIO: ::c_ulong = 0x5421;
+cfg_if! {
+    if #[cfg(not(target_os = "gnu"))] {
+        pub const FIOCLEX: ::c_ulong = 0x5451;
+        pub const FIONBIO: ::c_ulong = 0x5421;
+    } else {
+        pub const FIOCLEX: ::c_ulong = 0x00000001;
+        pub const FIONBIO: ::c_ulong = 0xA008007E;
+    }
+}
 
 pub const PTRACE_GETFPXREGS: ::c_uint = 18;
 pub const PTRACE_SETFPXREGS: ::c_uint = 19;
